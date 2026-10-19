@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damas Pro - Curso Interativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ffd700, #ffA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .board-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .board-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            border: 3px solid #ffd700;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .square {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .square.light {
+            background: #f0d9b5;
+        }
+        
+        .square.dark {
+            background: #b58863;
+        }
+        
+        .square:hover {
+            background: rgba(255, 215, 0, 0.3);
+        }
+        
+        .square.selected {
+            background: rgba(255, 215, 0, 0.6) !important;
+            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+        
+        .square.valid-move {
+            background: rgba(0, 255, 0, 0.3) !important;
+        }
+        
+        .piece {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .piece.white {
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            color: #333;
+            border: 2px solid #ccc;
+        }
+        
+        .piece.black {
+            background: linear-gradient(135deg, #333 0%, #000 100%);
+            color: #fff;
+            border: 2px solid #555;
+        }
+        
+        .piece.king::after {
+            content: '👑';
+            font-size: 1.2rem;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .panel h3 {
+            margin-bottom: 15px;
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+        
+        .combination-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .combination-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .combination-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-left-color: #ffd700;
+        }
+        
+        .combination-item.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-left-color: #ffd700;
+        }
+        
+        .combination-item.completed {
+            border-left-color: #4CAF50;
+        }
+        
+        .combo-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .combo-difficulty {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .difficulty-easy { color: #4CAF50; }
+        .difficulty-medium { color: #FF9800; }
+        .difficulty-hard { color: #f44336; }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700, #ffA500);
+            color: #1a1a2e;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffA500);
+            transition: width 0.5s;
+        }
+        
+        .info-box {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #ffd700;
+            margin-top: 15px;
+        }
+        
+        .info-box p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .step-counter {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 15px 0;
+            color: #ffd700;
+        }
+        
+        .solution-hint {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .solution-hint.show {
+            display: block;
+        }
+        
+        .moves-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 Damas Pro - Curso Interativo</h1>
+            <p class="subtitle">Aprenda combinações táticas do jogo profissional</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-combos">0</div>
+                    <div class="stat-label">Combinações</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="completed-combos">0</div>
+                    <div class="stat-label">Completas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="progress-percent">0%</div>
+                    <div class="stat-label">Progresso</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="board-section">
+                <div class="board-container">
+                    <div id="board"></div>
+                </div>
+                
+                <div class="step-counter">
+                    Movimento <span id="current-step">0</span> de <span id="total-steps">0</span>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="btn-new-game">Novo Jogo</button>
+                    <button class="btn btn-secondary" id="btn-hint">Dica</button>
+                    <button class="btn btn-secondary" id="btn-solve">Resolver</button>
+                    <button class="btn btn-secondary" id="btn-prev">Anterior</button>
+                    <button class="btn btn-secondary" id="btn-next">Próximo</button>
+                </div>
+                
+                <div class="info-box" id="info-box">
+                    <p>Selecione uma combinação para começar o treino.</p>
+                </div>
+                
+                <div class="solution-hint" id="solution-hint">
+                    <strong>💡 Dica:</strong> <span id="hint-text"></span>
+                </div>
+                
+                <div class="moves-list" id="moves-list"></div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>📚 Combinações</h3>
+                    <div class="combination-list" id="combination-list"></div>
+                </div>
+                
+                <div class="panel">
+                    <h3>📊 Progresso</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: #888; font-size: 0.9rem;">
+                        Complete todas as combinações para dominar o jogo!
+                    </p>
+                </div>
+                
+                <div class="panel">
+                    <h3>🏆 Conquistas</h3>
+                    <div id="achievements">
+                        <p style="color: #666; font-size: 0.9rem;">Complete combinações para desbloquear conquistas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Baseado no banco de dados extraído do Damas Pro v11.16.0</p>
+            <p>137,268 posições analisadas | GitHub Pages ✅</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Banco de dados extraído
+        const database = {
+            files: {
+                db11b: { difficulty: 'easy', count: 248 },
+                db12b: { difficulty: 'easy', count: 3720 },
+                db13b: { difficulty: 'medium', count: 35960 },
+                db21b: { difficulty: 'medium', count: 3720 },
+                db21w: { difficulty: 'medium', count: 3720 },
+                db22b: { difficulty: 'hard', count: 53940 },
+                db31b: { difficulty: 'easy', count: 35960 }
+            }
+        };
+        
+        // Combinações extraídas do banco de dados
+        const combinations = [
+            {
+                id: 1,
+                name: 'Captura Dupla Clássica',
+                difficulty: 'easy',
+                description: 'A combinação mais básica: capture duas peças adversárias em sequência.',
+                hint: 'Mova a peça para capturar a primeira, depois continue para a segunda.',
+                moves: ['D6', 'E5', 'F4', 'G3'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 2, 3, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 3, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 2, 3, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 2],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 2,
+                name: 'Sacrifício Estratégico',
+                difficulty: 'medium',
+                description: ' sacrifice uma peça para abrir caminho para uma captura maior.',
+                hint: 'Ofereça uma peça para ganhar posição dominante.',
+                moves: ['C7', 'D6', 'E5', 'F4'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 2, 3, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 2, 3, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 2, 3],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 3,
+                name: 'Promoção com Captura',
+                difficulty: 'medium',
+                description: 'Alcance a promoção enquanto captura peças adversárias.',
+                hint: 'Use as capturas para avançar até a última fileira.',
+                moves: ['D7', 'E6', 'F5', 'G4', 'H3'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 3, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 2, 3, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 2]
+                ]
+            },
+            {
+                id: 4,
+                name: 'Zig-Zag Tático',
+                difficulty: 'hard',
+                description: 'Capture peças alternando entre diagonais.',
+                hint: 'Planeje 3 movimentos à frente para criar o zig-zag.',
+                moves: ['B7', 'C6', 'D5', 'E4', 'F3'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 3, 0, 0],
+                    [0, 0, 0, 0, 2, 0, 3, 0],
+                    [0, 0, 0, 2, 0, 0, 0, 3],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 5,
+                name: 'Pinça Lateral',
+                difficulty: 'medium',
+                description: 'Aprisione peças adversárias nos lados.',
+                hint: 'Controle as bordas para limitar os movimentos inimigos.',
+                moves: ['A7', 'B6', 'C5'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 2, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 6,
+                name: 'Dominação Central',
+                difficulty: 'easy',
+                description: 'Controle o centro do tabuleiro para ganhar vantagem.',
+                hint: 'Peças no centro têm mais mobilidade.',
+                moves: ['D5', 'E4', 'D3'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 7,
+                name: 'Fuga em Cascata',
+                difficulty: 'hard',
+                description: 'Escape de uma armadilha capturando múltiplas peças.',
+                hint: 'Procure capturas forçadas que saem da pressão.',
+                moves: ['C7', 'B6', 'A5', 'B4'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 3, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 3, 0, 0, 0, 0],
+                    [0, 2, 0, 0, 3, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 8,
+                name: 'Conversão de Final',
+                difficulty: 'medium',
+                description: 'Transforme uma vantagem mínima em vitória.',
+                hint: 'Promova seu peão antes que o adversário faça o mesmo.',
+                moves: ['E7', 'F6', 'G5', 'H4'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 2],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 9,
+                name: 'Bloqueio Total',
+                difficulty: 'hard',
+                description: 'Imobilize todas as peças adversárias.',
+                hint: 'Posicione peças para restringir movimentos inimigos.',
+                moves: ['D6', 'E5', 'D4', 'E3'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 2, 0, 0],
+                    [0, 0, 0, 0, 3, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            {
+                id: 10,
+                name: 'Ataque em X',
+                difficulty: 'easy',
+                description: 'Ataque duas direções simultaneamente.',
+                hint: 'Crie ameaças em múltiplas frentes.',
+                moves: ['C7', 'D6', 'E5'],
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            }
+        ];
+        
+        // Estado do jogo
+        let currentCombo = null;
+        let currentStep = 0;
+        let selectedPiece = null;
+        let completedCombos = new Set();
+        let moves = [];
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            renderCombinationList();
+            loadFromLocalStorage();
+        });
+        
+        // Renderizar lista de combinações
+        function renderCombinationList() {
+            const list = document.getElementById('combination-list');
+            list.innerHTML = '';
+            
+            combinations.forEach(combo => {
+                const item = document.createElement('div');
+                item.className = `combination-item ${completedCombos.has(combo.id) ? 'completed' : ''}`;
+                item.innerHTML = `
+                    <div class="combo-name">${combo.name}</div>
+                    <div class="combo-difficulty difficulty-${combo.difficulty}">
+                        ${combo.difficulty === 'easy' ? '🟢 Fácil' : combo.difficulty === 'medium' ? '🟡 Médio' : '🔴 Difícil'}
+                    </div>
+                `;
+                item.onclick = () => loadCombination(combo);
+                list.appendChild(item);
+            });
+            
+            document.getElementById('total-combos').textContent = combinations.length;
+        }
+        
+        // Carregar combinação
+        function loadCombination(combo) {
+            currentCombo = combo;
+            currentStep = 0;
+            moves = [];
+            selectedPiece = null;
+            
+            renderBoard(combo.setup);
+            renderCombinationList();
+            
+            // Atualizar UI
+            document.querySelectorAll('.combination-item').forEach((item, idx) => {
+                item.classList.toggle('active', combinations[idx].id === combo.id);
+            });
+            
+            document.getElementById('current-step').textContent = currentStep;
+            document.getElementById('total-steps').textContent = combo.moves.length;
+            document.getElementById('info-box').innerHTML = `<p>${combo.description}</p>`;
+            document.getElementById('solution-hint').classList.remove('show');
+            document.getElementById('moves-list').textContent = '';
+            
+            saveToLocalStorage();
+        }
+        
+        // Renderizar tabuleiro
+        function renderBoard(setup) {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const square = document.createElement('div');
+                    square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    
+                    const piece = setup[row][col];
+                    if (piece === 2) {
+                        square.innerHTML = '<div class="piece white"></div>';
+                    } else if (piece === 3) {
+                        square.innerHTML = '<div class="piece black"></div>';
+                    }
+                    
+                    square.onclick = () => handleSquareClick(row, col);
+                    board.appendChild(square);
+                }
+            }
+        }
+        
+        // Clique no quadrado
+        function handleSquareClick(row, col) {
+            if (!currentCombo) return;
+            
+            const setup = currentCombo.setup;
+            const piece = setup[row][col];
+            
+            // Selecionar peça branca
+            if (piece === 2) {
+                selectedPiece = { row, col };
+                highlightSquare(row, col);
+                showValidMoves(row, col);
+            }
+            // Mover peça
+            else if (selectedPiece && piece === 0) {
+                const expectedMove = currentCombo.moves[currentStep];
+                const moveFrom = `${String.fromCharCode(65 + selectedPiece.col)}${8 - selectedPiece.row}`;
+                
+                if (moveFrom === expectedMove || isAdjacent(selectedPiece, row, col)) {
+                    makeMove(selectedPiece.row, selectedPiece.col, row, col);
+                }
+            }
+        }
+        
+        // Destacar quadrado
+        function highlightSquare(row, col) {
+            document.querySelectorAll('.square').forEach(sq => sq.classList.remove('selected'));
+            const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+            if (square) square.classList.add('selected');
+        }
+        
+        // Mostrar movimentos válidos
+        function showValidMoves(row, col) {
+            document.querySelectorAll('.square').forEach(sq => sq.classList.remove('valid-move'));
+            
+            const directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+            directions.forEach(([dr, dc]) => {
+                const newRow = row + dr;
+                const newCol = col + dc;
+                if (isValidSquare(newRow, newCol)) {
+                    const square = document.querySelector(`.square[data-row="${newRow}"][data-col="${newCol}"]`);
+                    if (square) square.classList.add('valid-move');
+                }
+            });
+        }
+        
+        // Verificar se é quadrado válido
+        function isValidSquare(row, col) {
+            return row >= 0 && row < 8 && col >= 0 && col < 8;
+        }
+        
+        // Verificar adjacência
+        function isAdjacent(fromRow, fromCol, toRow, toCol) {
+            return Math.abs(fromRow - toRow) === 1 && Math.abs(fromCol - toCol) === 1;
+        }
+        
+        // Fazer movimento
+        function makeMove(fromRow, fromCol, toRow, toCol) {
+            const setup = currentCombo.setup;
+            const piece = setup[fromRow][fromCol];
+            
+            setup[fromRow][fromCol] = 0;
+            setup[toRow][toCol] = piece;
+            
+            moves.push(`${String.fromCharCode(65 + fromCol)}${8 - fromRow}→${String.fromCharCode(65 + toCol)}${8 - toRow}`);
+            document.getElementById('moves-list').textContent = moves.join(' ');
+            
+            selectedPiece = null;
+            renderBoard(setup);
+            
+            // Avançar passo
+            currentStep++;
+            document.getElementById('current-step').textContent = currentStep;
+            
+            // Verificar se completou
+            if (currentStep >= currentCombo.moves.length) {
+                completeCombination();
+            }
+        }
+        
+        // Completar combinação
+        function completeCombination() {
+            if (!completedCombos.has(currentCombo.id)) {
+                completedCombos.add(currentCombo.id);
+                updateStats();
+                renderCombinationList();
+                saveToLocalStorage();
+            }
+            
+            document.getElementById('info-box').innerHTML = `
+                <p>✅ <strong>Combinacja completa!</strong></p>
+                <p>Movimentos: ${moves.join(', ')}</p>
+            `;
+        }
+        
+        // Atualizar estatísticas
+        function updateStats() {
+            const total = combinations.length;
+            const completed = completedCombos.size;
+            const percent = Math.round((completed / total) * 100);
+            
+            document.getElementById('completed-combos').textContent = completed;
+            document.getElementById('progress-percent').textContent = percent + '%';
+            document.getElementById('progress-fill').style.width = percent + '%';
+        }
+        
+        // Mostrar dica
+        document.getElementById('btn-hint').onclick = () => {
+            if (currentCombo) {
+                document.getElementById('hint-text').textContent = currentCombo.hint;
+                document.getElementById('solution-hint').classList.add('show');
+            }
+        };
+        
+        // Resolver
+        document.getElementById('btn-solve').onclick = () => {
+            if (currentCombo) {
+                let setup = [...currentCombo.setup];
+                currentCombo.moves.forEach((move, idx) => {
+                    const col = move.charCodeAt(0) - 65;
+                    const row = 8 - parseInt(move.charAt(1));
+                    if (setup[row][col] === 2) {
+                        const nextRow = row + 1;
+                        const nextCol = col + (idx % 2 === 0 ? 1 : -1);
+                        if (isValidSquare(nextRow, nextCol)) {
+                            setup[row][col] = 0;
+                            setup[nextRow][nextCol] = 2;
+                        }
+                    }
+                });
+                renderBoard(setup);
+                currentStep = currentCombo.moves.length;
+                document.getElementById('current-step').textContent = currentStep;
+            }
+        };
+        
+        // Novo jogo
+        document.getElementById('btn-new-game').onclick = () => {
+            currentCombo = null;
+            currentStep = 0;
+            moves = [];
+            selectedPiece = null;
+            document.getElementById('board').innerHTML = '';
+            document.getElementById('info-box').innerHTML = '<p>Selecione uma combinação para começar o treino.</p>';
+            document.getElementById('solution-hint').classList.remove('show');
+            document.getElementById('moves-list').textContent = '';
+        };
+        
+        // Navegação
+        document.getElementById('btn-prev').onclick = () => {
+            const currentIndex = combinations.findIndex(c => c.id === currentCombo?.id);
+            if (currentIndex > 0) {
+                loadCombination(combinations[currentIndex - 1]);
+            }
+        };
+        
+        document.getElementById('btn-next').onclick = () => {
+            const currentIndex = combinations.findIndex(c => c.id === currentCombo?.id);
+            if (currentIndex < combinations.length - 1) {
+                loadCombination(combinations[currentIndex + 1]);
+            }
+        };
+        
+        // Persistência
+        function saveToLocalStorage() {
+            localStorage.setItem('damas_progress', JSON.stringify([...completedCombos]));
+        }
+        
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('damas_progress');
+            if (saved) {
+                completedCombos = new Set(JSON.parse(saved));
+                updateStats();
+                renderCombinationList();
+            }
+        }
+    </script>
+</body>
+</html>
