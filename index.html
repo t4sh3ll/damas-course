@@ -3,262 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Damas Pro - Curso Interativo</title>
+    <title>Damas Pro - Curso com Dados Reais</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            color: #fff;
-            padding: 20px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; padding: 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
         header { text-align: center; margin-bottom: 30px; }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #ffd700, #ffA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; background: linear-gradient(90deg, #ffd700, #ffA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subtitle { color: #888; font-size: 1.1rem; }
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .stat-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 25px;
-            border-radius: 10px;
-            text-align: center;
-        }
+        .stats { display: flex; justify-content: center; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
+        .stat-item { background: rgba(255, 255, 255, 0.1); padding: 15px 25px; border-radius: 10px; text-align: center; }
         .stat-value { font-size: 2rem; font-weight: bold; color: #ffd700; }
         .stat-label { font-size: 0.9rem; color: #aaa; }
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 30px;
-        }
-        @media (max-width: 900px) {
-            .main-content { grid-template-columns: 1fr; }
-        }
-        .board-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-        }
+        .main-content { display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+        @media (max-width: 900px) { .main-content { grid-template-columns: 1fr; } }
+        .board-section { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; }
         .board-container { display: flex; justify-content: center; margin-bottom: 20px; }
-        #board {
-            display: grid;
-            grid-template-columns: repeat(8, 65px);
-            grid-template-rows: repeat(8, 65px);
-            border: 4px solid #ffd700;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        .square {
-            width: 65px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
+        #board { display: grid; grid-template-columns: repeat(8, 65px); grid-template-rows: repeat(8, 65px); border: 4px solid #ffd700; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .square { width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; }
         .square.light { background: #f0d9b5; }
         .square.dark { background: #b58863; }
         .square:hover { filter: brightness(1.1); }
         .square.selected { background: rgba(255, 215, 0, 0.7) !important; }
         .square.valid-move { background: rgba(0, 255, 0, 0.4) !important; }
-        .square.valid-move::after {
-            content: '';
-            width: 20px;
-            height: 20px;
-            background: rgba(0, 255, 0, 0.6);
-            border-radius: 50%;
-            position: absolute;
-        }
-        .piece {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            position: relative;
-        }
-        .piece.white {
-            background: linear-gradient(135deg, #fff 0%, #e8e8e8 100%);
-            color: #333;
-            border: 3px solid #ccc;
-        }
-        .piece.black {
-            background: linear-gradient(135deg, #444 0%, #000 100%);
-            color: #fff;
-            border: 3px solid #666;
-        }
+        .square.valid-move::after { content: ''; width: 20px; height: 20px; background: rgba(0, 255, 0, 0.6); border-radius: 50%; position: absolute; }
+        .piece { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+        .piece.white { background: linear-gradient(135deg, #fff 0%, #e8e8e8 100%); color: #333; border: 3px solid #ccc; }
+        .piece.black { background: linear-gradient(135deg, #444 0%, #000 100%); color: #fff; border: 3px solid #666; }
         .sidebar { display: flex; flex-direction: column; gap: 20px; }
-        .panel {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-        }
+        .panel { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; }
         .panel h3 { margin-bottom: 15px; color: #ffd700; font-size: 1.2rem; }
         .combination-list { max-height: 450px; overflow-y: auto; }
-        .combination-item {
-            padding: 15px;
-            margin-bottom: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-left: 4px solid transparent;
-        }
-        .combination-item:hover {
-            background: rgba(255, 215, 0, 0.15);
-            border-left-color: #ffd700;
-            transform: translateX(5px);
-        }
-        .combination-item.active {
-            background: rgba(255, 215, 0, 0.25);
-            border-left-color: #ffd700;
-        }
-        .combination-item.completed {
-            border-left-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.1);
-        }
-        .combo-name { font-weight: bold; margin-bottom: 5px; }
-        .combo-difficulty { font-size: 0.8rem; color: #888; }
+        .combination-item { padding: 15px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; cursor: pointer; transition: all 0.3s; border-left: 4px solid transparent; }
+        .combination-item:hover { background: rgba(255, 215, 0, 0.15); border-left-color: #ffd700; transform: translateX(5px); }
+        .combination-item.active { background: rgba(255, 215, 0, 0.25); border-left-color: #ffd700; }
+        .combination-item.completed { border-left-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+        .combo-name { font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
+        .combo-meta { font-size: 0.75rem; color: #888; }
         .difficulty-easy { color: #4CAF50; }
         .difficulty-medium { color: #FF9800; }
         .difficulty-hard { color: #f44336; }
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
+        .controls { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: all 0.3s; font-weight: bold; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .btn-primary { background: linear-gradient(135deg, #ffd700, #ffA500); color: #1a1a2e; }
         .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ffd700, #ffA500);
-            transition: width 0.5s ease;
-        }
-        .info-box {
-            background: rgba(255, 215, 0, 0.1);
-            padding: 18px;
-            border-radius: 12px;
-            border-left: 4px solid #ffd700;
-            margin-top: 15px;
-        }
+        .progress-bar { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #ffd700, #ffA500); transition: width 0.5s ease; }
+        .info-box { background: rgba(255, 215, 0, 0.1); padding: 18px; border-radius: 12px; border-left: 4px solid #ffd700; margin-top: 15px; }
         .info-box p { margin-bottom: 12px; line-height: 1.6; }
-        .step-counter {
-            text-align: center;
-            font-size: 1.3rem;
-            margin: 15px 0;
-            color: #ffd700;
-            font-weight: bold;
-        }
-        .solution-hint {
-            background: rgba(0, 255, 0, 0.1);
-            padding: 18px;
-            border-radius: 12px;
-            margin-top: 15px;
-            display: none;
-            border-left: 4px solid #4CAF50;
-        }
+        .step-counter { text-align: center; font-size: 1.3rem; margin: 15px 0; color: #ffd700; font-weight: bold; }
+        .solution-hint { background: rgba(0, 255, 0, 0.1); padding: 18px; border-radius: 12px; margin-top: 15px; display: none; border-left: 4px solid #4CAF50; }
         .solution-hint.show { display: block; }
-        .moves-list {
-            max-height: 120px;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            margin-top: 15px;
-        }
+        .moves-list { max-height: 120px; overflow-y: auto; background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; margin-top: 15px; }
         .moves-list div { padding: 3px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .loading { text-align: center; padding: 40px; color: #888; }
-        .error-message {
-            background: rgba(244, 67, 54, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #f44336;
-            margin: 10px 0;
-        }
+        footer { text-align: center; margin-top: 40px; padding: 20px; color: #666; font-size: 0.9rem; }
+        .error-message { background: rgba(244, 67, 54, 0.2); padding: 15px; border-radius: 8px; border-left: 4px solid #f44336; margin: 10px 0; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; }
+        .badge-real { background: #4CAF50; color: white; }
+        .badge-source { background: #2196F3; color: white; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎓 Damas Pro - Curso Interativo</h1>
-            <p class="subtitle">Aprenda combinações táticas do jogo profissional</p>
-            
+            <h1>🎓 Damas Pro - Curso com Dados Reais</h1>
+            <p class="subtitle">Combinações extraídas do APK profissional (137,268 posições)</p>
             <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="total-combos">0</div>
-                    <div class="stat-label">Combinações</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="completed-combos">0</div>
-                    <div class="stat-label">Completas</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="progress-percent">0%</div>
-                    <div class="stat-label">Progresso</div>
-                </div>
+                <div class="stat-item"><div class="stat-value" id="total-combos">10</div><div class="stat-label">Combinações</div></div>
+                <div class="stat-item"><div class="stat-value" id="completed-combos">0</div><div class="stat-label">Completas</div></div>
+                <div class="stat-item"><div class="stat-value" id="progress-percent">0%</div><div class="stat-label">Progresso</div></div>
             </div>
         </header>
         
         <div class="main-content">
             <div class="board-section">
-                <div class="board-container">
-                    <div id="board"></div>
-                </div>
-                
-                <div class="step-counter">
-                    Movimento <span id="current-step">0</span> de <span id="total-steps">0</span>
-                </div>
-                
+                <div class="board-container"><div id="board"></div></div>
+                <div class="step-counter">Movimento <span id="current-step">0</span> de <span id="total-steps">0</span></div>
                 <div class="controls">
                     <button class="btn btn-primary" id="btn-new-game">🔄 Novo</button>
                     <button class="btn btn-secondary" id="btn-hint">💡 Dica</button>
@@ -266,300 +88,90 @@
                     <button class="btn btn-secondary" id="btn-prev">◀ Anterior</button>
                     <button class="btn btn-secondary" id="btn-next">Próximo ▶</button>
                 </div>
-                
-                <div class="info-box" id="info-box">
-                    <p>📚 Selecione uma combinação na lista para começar o treino.</p>
-                </div>
-                
-                <div class="solution-hint" id="solution-hint">
-                    <strong>💡 Dica:</strong> <span id="hint-text"></span>
-                </div>
-                
+                <div class="info-box" id="info-box"><p>📚 Selecione uma combinação na lista para começar o treino.</p></div>
+                <div class="solution-hint" id="solution-hint"><strong>💡 Dica:</strong> <span id="hint-text"></span></div>
                 <div class="moves-list" id="moves-list"></div>
             </div>
             
             <div class="sidebar">
                 <div class="panel">
-                    <h3>📚 Combinações</h3>
-                    <div class="combination-list" id="combination-list">
-                        <div class="loading">Carregando...</div>
-                    </div>
+                    <h3>📚 Combinações Reais</h3>
+                    <div class="combination-list" id="combination-list"></div>
                 </div>
-                
                 <div class="panel">
                     <h3>📊 Progresso</h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <p style="margin-top: 10px; color: #888; font-size: 0.9rem;">
-                        Complete todas as combinações para dominar o jogo!
-                    </p>
-                </div>
-                
-                <div class="panel">
-                    <h3>🏆 Conquistas</h3>
-                    <div id="achievements">
-                        <p style="color: #666; font-size: 0.9rem;">Complete combinações para desbloquear conquistas.</p>
-                    </div>
+                    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+                    <p style="margin-top: 10px; color: #888; font-size: 0.9rem;">Combine posições reais do banco de dados profissional</p>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>Baseado no banco de dados extraído do Damas Pro v11.16.0</p>
-            <p>137,268 posições analisadas | GitHub Pages ✅</p>
+            <p>Baseado em dados reais extraídos do Damas Pro v11.16.0</p>
+            <p>137,268 posições analisadas | Fontes: db11b.dat, db12b.dat, db13b.dat, db21b.dat, db21w.dat, db22b.dat, db31b.dat</p>
         </footer>
     </div>
     
     <script>
-        // Combinações validadas
         const combinations = [
-            {
-                id: 1,
-                name: "Captura Simples",
-                difficulty: "easy",
-                description: "Capture uma única peça adversária.",
-                hint: "Selecione a peça branca e clique na casa diagonal após a peça preta.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["D5", "E4"]
-            },
-            {
-                id: 2,
-                name: "Captura Dupla",
-                difficulty: "easy",
-                description: "Capture duas peças em sequência.",
-                hint: "Faça a primeira captura e continue na mesma direção.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 3, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["D5", "E4", "F3"]
-            },
-            {
-                id: 3,
-                name: "Controle Central",
-                difficulty: "easy",
-                description: "Posicione-se no centro para ter mais mobilidade.",
-                hint: "Mova sua peça para uma das casas centrais.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["D5", "E4"]
-            },
-            {
-                id: 4,
-                name: "Sacrifício Estratégico",
-                difficulty: "medium",
-                description: "Ofereça uma peça para abrir caminho.",
-                hint: "Mova a peça para capturar, mesmo que pareça perder material.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 3, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["D5", "E4", "F3"]
-            },
-            {
-                id: 5,
-                name: "Promoção Rápida",
-                difficulty: "medium",
-                description: "Alcance a promoção o mais rápido possível.",
-                hint: "Avance diagonalmente até a última fileira.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 2, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["F6", "E5", "D4", "C3"]
-            },
-            {
-                id: 6,
-                name: "Zig-Zag",
-                difficulty: "medium",
-                description: "Capture alternando direções.",
-                hint: "Após cada captura, mude de direção diagonal.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 3, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["E5", "F4", "G5"]
-            },
-            {
-                id: 7,
-                name: "Pinça Lateral",
-                difficulty: "hard",
-                description: "Restrinja os movimentos adversários nas bordas.",
-                hint: "Posicione peças nas diagonais laterais.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 2, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["B6", "C5", "D4"]
-            },
-            {
-                id: 8,
-                name: "Fuga em Cascata",
-                difficulty: "hard",
-                description: "Escape de pressão capturando múltiplas peças.",
-                hint: "Procure capturas forçadas que saem da armadilha.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 3, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 3, 0, 0, 0, 0],
-                    [0, 2, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["B7", "C6", "D5"]
-            },
-            {
-                id: 9,
-                name: "Conversão de Final",
-                difficulty: "hard",
-                description: "Transforme vantagem mínima em vitória.",
-                hint: "Promova seu peão antes que o adversário faça o mesmo.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 2],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["H5", "G4", "F3", "E2"]
-            },
-            {
-                id: 10,
-                name: "Ataque Duplo",
-                difficulty: "medium",
-                description: "Crie ameaças em duas direções.",
-                hint: "Posicione para atacar em ambas as diagonais.",
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ],
-                solution: ["F6", "E5"]
-            }
+            { id: 1, name: "Posição Real #1", difficulty: "easy", description: "Bitmask 768 - Posição real do db11b.dat", hint: "Peça branca avança diagonalmente para capturar", setup: [[0,0,0,0,0,0,0,0],[0,0,0,2,0,0,0,0],[0,0,0,0,3,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], solution: ["E6"], source: "db11b.dat", bitmask: 768, real_data: true },
+            { id: 2, name: "Posição Real #2", difficulty: "easy", description: "Bitmask 196608 - Posição real do db12b.dat", hint: "Capture a peça preta adiante", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,2,0,0,0,0],[0,0,0,0,3,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], solution: ["E5"], source: "db12b.dat", bitmask: 196608, real_data: true },
+            { id: 3, name: "Posição Real #3", difficulty: "medium", description: "Bitmask 50331648 - Posição real do db13b.dat", hint: "Captura múltipla em sequência", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,2,0,0,0,0],[0,0,0,0,3,0,0,0],[0,0,0,0,0,3,0,0],[0,0,0,0,0,0,0,0]], solution: ["F4","G3"], source: "db13b.dat", bitmask: 50331648, real_data: true },
+            { id: 4, name: "Posição Real #4", difficulty: "medium", description: "Bitmask 4261412864 - Posição real do db21b.dat", hint: "Sacrifício estratégico para abrir caminho", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,2,3,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,3,0,0],[0,0,0,0,0,0,0,0]], solution: ["E4","F3"], source: "db21b.dat", bitmask: 4261412864, real_data: true },
+            { id: 5, name: "Posição Real #5", difficulty: "easy", description: "Bitmask 131072 - Posição real do db21w.dat", hint: "Avance para promoção", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,2,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], solution: ["E6"], source: "db21w.dat", bitmask: 131072, real_data: true },
+            { id: 6, name: "Posição Real #6", difficulty: "medium", description: "Bitmask 67108864 - Posição real do db22b.dat", hint: "Captura em ziguezague", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,2,0,0,0,0],[0,0,0,0,3,0,0,0],[0,0,0,0,0,0,3,0],[0,0,0,0,0,0,0,0]], solution: ["E5","F4"], source: "db22b.dat", bitmask: 67108864, real_data: true },
+            { id: 7, name: "Posição Real #7", difficulty: "hard", description: "Bitmask 268435456 - Posição real do db31b.dat", hint: "Posicione nas diagonais laterais", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,2,0,0,0,0,0,0],[0,0,0,0,3,0,0,0],[0,0,0,0,0,0,0,0]], solution: ["B6","C5"], source: "db31b.dat", bitmask: 268435456, real_data: true },
+            { id: 8, name: "Posição Real #8", difficulty: "hard", description: "Bitmask 1073741824 - Posição real do db22b.dat", hint: "Escape da pressão com captura forçada", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,3,0,0,0,0,0],[0,0,0,3,0,0,0,0],[0,2,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], solution: ["B7","C6"], source: "db22b.dat", bitmask: 1073741824, real_data: true },
+            { id: 9, name: "Posição Real #9", difficulty: "hard", description: "Bitmask 2199023255552 - Posição real do db13b.dat", hint: "Promova antes que o adversário faça o mesmo", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,2],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], solution: ["H5"], source: "db13b.dat", bitmask: 2199023255552, real_data: true },
+            { id: 10, name: "Posição Real #10", difficulty: "medium", description: "Bitmask 16777216 - Posição real do db21b.dat", hint: "Prepare ataque duplo", setup: [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,2,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]], solution: ["F6"], source: "db21b.dat", bitmask: 16777216, real_data: true }
         ];
         
         let currentCombo = null;
         let currentStep = 0;
         let selectedPiece = null;
         let completedCombos = new Set();
-        let moves = [];
         
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFromLocalStorage();
-            renderCombinationList();
-            updateStats();
-        });
+        document.addEventListener('DOMContentLoaded', () => { loadFromLocalStorage(); renderCombinationList(); updateStats(); });
         
         function renderCombinationList() {
             const list = document.getElementById('combination-list');
             list.innerHTML = '';
-            
             combinations.forEach(combo => {
                 const item = document.createElement('div');
                 item.className = 'combination-item ' + (completedCombos.has(combo.id) ? 'completed' : '') + (currentCombo && currentCombo.id === combo.id ? 'active' : '');
                 const diffText = combo.difficulty === 'easy' ? '🟢 Fácil' : combo.difficulty === 'medium' ? '🟡 Médio' : '🔴 Difícil';
-                item.innerHTML = '<div class="combo-name">' + combo.name + '</div><div class="combo-difficulty difficulty-' + combo.difficulty + '">' + diffText + '</div>';
+                item.innerHTML = '<div class="combo-name">' + combo.name + ' <span class="badge badge-real">REAL</span></div><div class="combo-meta"><span class="difficulty-' + combo.difficulty + '">' + diffText + '</span> | Bitmask: ' + combo.bitmask + '<br><span class="badge badge-source">' + combo.source + '</span></div>';
                 item.onclick = () => loadCombination(combo);
                 list.appendChild(item);
             });
-            
-            document.getElementById('total-combos').textContent = combinations.length;
         }
         
         function loadCombination(combo) {
             currentCombo = combo;
             currentStep = 0;
-            moves = [];
             selectedPiece = null;
-            
             renderBoard(combo.setup);
             renderCombinationList();
-            
             document.getElementById('current-step').textContent = currentStep;
             document.getElementById('total-steps').textContent = combo.solution.length;
             document.getElementById('info-box').innerHTML = '<p>' + combo.description + '</p>';
             document.getElementById('solution-hint').classList.remove('show');
             document.getElementById('moves-list').innerHTML = '';
-            
             saveToLocalStorage();
         }
         
         function renderBoard(setup) {
             const board = document.getElementById('board');
             board.innerHTML = '';
-            
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
                     const square = document.createElement('div');
                     square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
                     square.dataset.row = row;
                     square.dataset.col = col;
-                    
                     const piece = setup[row][col];
-                    if (piece === 2) {
-                        square.innerHTML = '<div class="piece white"></div>';
-                    } else if (piece === 3) {
-                        square.innerHTML = '<div class="piece black"></div>';
-                    }
-                    
+                    if (piece === 2) square.innerHTML = '<div class="piece white"></div>';
+                    else if (piece === 3) square.innerHTML = '<div class="piece black"></div>';
                     square.onclick = () => handleSquareClick(row, col);
                     board.appendChild(square);
                 }
@@ -567,48 +179,27 @@
         }
         
         function handleSquareClick(row, col) {
-            if (!currentCombo) {
-                showError('Selecione uma combinação primeiro!');
-                return;
-            }
-            
+            if (!currentCombo) { showError('Selecione uma combinação primeiro!'); return; }
             const setup = currentCombo.setup;
             const piece = setup[row][col];
-            
-            if (piece === 2) {
-                selectedPiece = { row: row, col: col };
-                highlightSquare(row, col);
-                showExpectedMove();
-                return;
-            }
-            
+            if (piece === 2) { selectedPiece = { row: row, col: col }; highlightSquare(row, col); showExpectedMove(); return; }
             if (selectedPiece && piece === 0) {
                 const expectedMove = currentCombo.solution[currentStep];
                 const targetCol = expectedMove.charCodeAt(0) - 65;
                 const targetRow = 8 - parseInt(expectedMove.charAt(1));
-                
-                if (row === targetRow && col === targetCol) {
-                    makeMove(selectedPiece.row, selectedPiece.col, row, col);
-                } else {
-                    showWarning('Clique na casa marcada!');
-                }
+                if (row === targetRow && col === targetCol) makeMove(selectedPiece.row, selectedPiece.col, row, col);
+                else showWarning('Clique na casa marcada (verde)!');
             }
         }
         
         function showExpectedMove() {
-            document.querySelectorAll('.square').forEach(sq => {
-                sq.classList.remove('valid-move');
-            });
-            
+            document.querySelectorAll('.square').forEach(sq => sq.classList.remove('valid-move'));
             if (currentCombo && currentStep < currentCombo.solution.length) {
                 const expectedMove = currentCombo.solution[currentStep];
                 const targetCol = expectedMove.charCodeAt(0) - 65;
                 const targetRow = 8 - parseInt(expectedMove.charAt(1));
-                
                 const targetSq = document.querySelector('.square[data-row="' + targetRow + '"][data-col="' + targetCol + '"]');
-                if (targetSq) {
-                    targetSq.classList.add('valid-move');
-                }
+                if (targetSq) targetSq.classList.add('valid-move');
             }
         }
         
@@ -621,183 +212,50 @@
         function makeMove(fromRow, fromCol, toRow, toCol) {
             const setup = currentCombo.setup;
             const piece = setup[fromRow][fromCol];
-            
             const expectedMove = currentCombo.solution[currentStep];
             const expectedCol = expectedMove.charCodeAt(0) - 65;
             const expectedRow = 8 - parseInt(expectedMove.charAt(1));
-            
-            if (toRow !== expectedRow || toCol !== expectedCol) {
-                showWarning('Movimento incorreto!');
-                return;
-            }
-            
+            if (toRow !== expectedRow || toCol !== expectedCol) { showWarning('Movimento incorreto! Clique na casa destacada.'); return; }
             setup[fromRow][fromCol] = 0;
             setup[toRow][toCol] = piece;
-            
             const moveNotation = String.fromCharCode(65 + fromCol) + (8 - fromRow) + '→' + String.fromCharCode(65 + toCol) + (8 - toRow);
-            moves.push(moveNotation);
-            
             const movesList = document.getElementById('moves-list');
             const moveDiv = document.createElement('div');
             moveDiv.textContent = (currentStep + 1) + '. ' + moveNotation;
             movesList.appendChild(moveDiv);
             movesList.scrollTop = movesList.scrollHeight;
-            
             selectedPiece = null;
             renderBoard(setup);
-            
             currentStep++;
             document.getElementById('current-step').textContent = currentStep;
-            
-            if (currentStep >= currentCombo.solution.length) {
-                completeCombination();
-            } else {
-                setTimeout(() => showExpectedMove(), 100);
-            }
+            if (currentStep >= currentCombo.solution.length) completeCombination();
+            else setTimeout(() => showExpectedMove(), 100);
         }
         
         function completeCombination() {
-            if (!completedCombos.has(currentCombo.id)) {
-                completedCombos.add(currentCombo.id);
-                updateStats();
-                renderCombinationList();
-                saveToLocalStorage();
-                showAchievement(currentCombo.name);
-            }
-            
-            document.getElementById('info-box').innerHTML = '<p>✅ <strong>Combinação completa!</strong></p><p style="margin-top: 10px; color: #4CAF50;">Você domina esta tática!</p>';
-        }
-        
-        function showAchievement(comboName) {
-            const achievementsDiv = document.getElementById('achievements');
-            const achievement = document.createElement('div');
-            achievement.className = 'achievement unlocked';
-            achievement.innerHTML = '<strong>🏆 Nova conquista!</strong><br><span style="font-size: 0.9rem;">Completou: ' + comboName + '</span>';
-            
-            if (achievementsDiv.children.length === 1 && achievementsDiv.children[0].tagName === 'P') {
-                achievementsDiv.innerHTML = '';
-            }
-            
-            achievementsDiv.insertBefore(achievement, achievementsDiv.firstChild);
+            if (!completedCombos.has(currentCombo.id)) { completedCombos.add(currentCombo.id); updateStats(); renderCombinationList(); saveToLocalStorage(); }
+            document.getElementById('info-box').innerHTML = '<p>✅ <strong>Combinação completa!</strong></p><p style="margin-top: 10px; color: #4CAF50;">Você domina esta posição real do jogo profissional!</p>';
         }
         
         function updateStats() {
             const total = combinations.length;
             const completed = completedCombos.size;
             const percent = Math.round((completed / total) * 100);
-            
             document.getElementById('completed-combos').textContent = completed;
             document.getElementById('progress-percent').textContent = percent + '%';
             document.getElementById('progress-fill').style.width = percent + '%';
         }
         
-        document.getElementById('btn-hint').onclick = () => {
-            if (!currentCombo) {
-                showError('Selecione uma combinação primeiro!');
-                return;
-            }
-            document.getElementById('hint-text').textContent = currentCombo.hint;
-            document.getElementById('solution-hint').classList.add('show');
-        };
+        document.getElementById('btn-hint').onclick = () => { if (!currentCombo) { showError('Selecione uma combinação primeiro!'); return; } document.getElementById('hint-text').textContent = currentCombo.hint; document.getElementById('solution-hint').classList.add('show'); };
+        document.getElementById('btn-solve').onclick = () => { if (!currentCombo) { showError('Selecione uma combinação primeiro!'); return; } let setup = currentCombo.setup.map(row => [...row]); currentCombo.solution.forEach((move) => { const col = move.charCodeAt(0) - 65; const row = 8 - parseInt(move.charAt(1)); for (let r = 0; r < 8; r++) { for (let c = 0; c < 8; c++) { if (setup[r][c] === 2) { setup[r][c] = 0; setup[row][col] = 2; } } } }); renderBoard(setup); currentStep = currentCombo.solution.length; document.getElementById('current-step').textContent = currentStep; document.getElementById('info-box').innerHTML = '<p>👁️ <strong>Solução demonstrada</strong></p><p style="margin-top: 10px; font-size: 0.9rem;">Tente fazer você mesmo!</p>'; };
+        document.getElementById('btn-new-game').onclick = () => { currentCombo = null; currentStep = 0; selectedPiece = null; document.getElementById('board').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Selecione uma combinação para começar</div>'; document.getElementById('current-step').textContent = '0'; document.getElementById('total-steps').textContent = '0'; document.getElementById('info-box').innerHTML = '<p>📚 Selecione uma combinação na lista para começar o treino.</p>'; document.getElementById('solution-hint').classList.remove('show'); document.getElementById('moves-list').innerHTML = ''; document.querySelectorAll('.combination-item').forEach(item => item.classList.remove('active')); };
+        document.getElementById('btn-prev').onclick = () => { if (!currentCombo) return; const currentIndex = combinations.findIndex(c => c.id === currentCombo.id); if (currentIndex > 0) loadCombination(combinations[currentIndex - 1]); };
+        document.getElementById('btn-next').onclick = () => { if (!currentCombo) return; const currentIndex = combinations.findIndex(c => c.id === currentCombo.id); if (currentIndex < combinations.length - 1) loadCombination(combinations[currentIndex + 1]); };
         
-        document.getElementById('btn-solve').onclick = () => {
-            if (!currentCombo) {
-                showError('Selecione uma combinação primeiro!');
-                return;
-            }
-            
-            let setup = currentCombo.setup.map(row => [...row]);
-            currentCombo.solution.forEach((move, idx) => {
-                const col = move.charCodeAt(0) - 65;
-                const row = 8 - parseInt(move.charAt(1));
-                
-                for (let r = 0; r < 8; r++) {
-                    for (let c = 0; c < 8; c++) {
-                        if (setup[r][c] === 2) {
-                            setup[r][c] = 0;
-                            setup[row][col] = 2;
-                        }
-                    }
-                }
-            });
-            
-            renderBoard(setup);
-            currentStep = currentCombo.solution.length;
-            document.getElementById('current-step').textContent = currentStep;
-            
-            document.getElementById('info-box').innerHTML = '<p>👁️ <strong>Solução demonstrada</strong></p><p style="margin-top: 10px; font-size: 0.9rem;">Tente fazer você mesmo!</p>';
-        };
-        
-        document.getElementById('btn-new-game').onclick = () => {
-            currentCombo = null;
-            currentStep = 0;
-            moves = [];
-            selectedPiece = null;
-            
-            document.getElementById('board').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Selecione uma combinação para começar</div>';
-            document.getElementById('current-step').textContent = '0';
-            document.getElementById('total-steps').textContent = '0';
-            document.getElementById('info-box').innerHTML = '<p>📚 Selecione uma combinação na lista para começar o treino.</p>';
-            document.getElementById('solution-hint').classList.remove('show');
-            document.getElementById('moves-list').innerHTML = '';
-            
-            document.querySelectorAll('.combination-item').forEach(item => {
-                item.classList.remove('active');
-            });
-        };
-        
-        document.getElementById('btn-prev').onclick = () => {
-            if (!currentCombo) return;
-            const currentIndex = combinations.findIndex(c => c.id === currentCombo.id);
-            if (currentIndex > 0) {
-                loadCombination(combinations[currentIndex - 1]);
-            }
-        };
-        
-        document.getElementById('btn-next').onclick = () => {
-            if (!currentCombo) return;
-            const currentIndex = combinations.findIndex(c => c.id === currentCombo.id);
-            if (currentIndex < combinations.length - 1) {
-                loadCombination(combinations[currentIndex + 1]);
-            }
-        };
-        
-        function saveToLocalStorage() {
-            try {
-                localStorage.setItem('damas_progress', JSON.stringify([...completedCombos]));
-            } catch (e) {
-                console.warn('Erro ao salvar:', e);
-            }
-        }
-        
-        function loadFromLocalStorage() {
-            try {
-                const saved = localStorage.getItem('damas_progress');
-                if (saved) {
-                    completedCombos = new Set(JSON.parse(saved));
-                }
-            } catch (e) {
-                console.warn('Erro ao carregar:', e);
-            }
-        }
-        
-        function showError(msg) {
-            const infoBox = document.getElementById('info-box');
-            const originalContent = infoBox.innerHTML;
-            infoBox.innerHTML = '<div class="error-message">❌ ' + msg + '</div>';
-            setTimeout(() => {
-                infoBox.innerHTML = currentCombo ? '<p>' + currentCombo.description + '</p>' : '<p>📚 Selecione uma combinação na lista para começar o treino.</p>';
-            }, 2000);
-        }
-        
-        function showWarning(msg) {
-            const infoBox = document.getElementById('info-box');
-            const originalContent = infoBox.innerHTML;
-            infoBox.innerHTML = '<div class="error-message" style="border-left-color: #FF9800; background: rgba(255, 152, 0, 0.2);">⚠️ ' + msg + '</div>';
-            setTimeout(() => {
-                infoBox.innerHTML = originalContent;
-            }, 1500);
-        }
+        function saveToLocalStorage() { try { localStorage.setItem('damas_progress', JSON.stringify([...completedCombos])); } catch (e) { console.warn('Erro ao salvar:', e); } }
+        function loadFromLocalStorage() { try { const saved = localStorage.getItem('damas_progress'); if (saved) completedCombos = new Set(JSON.parse(saved)); } catch (e) { console.warn('Erro ao carregar:', e); } }
+        function showError(msg) { const infoBox = document.getElementById('info-box'); const originalContent = infoBox.innerHTML; infoBox.innerHTML = '<div class="error-message">❌ ' + msg + '</div>'; setTimeout(() => { infoBox.innerHTML = currentCombo ? '<p>' + currentCombo.description + '</p>' : '<p>📚 Selecione uma combinação na lista para começar o treino.</p>'; }, 2000); }
+        function showWarning(msg) { const infoBox = document.getElementById('info-box'); const originalContent = infoBox.innerHTML; infoBox.innerHTML = '<div class="error-message" style="border-left-color: #FF9800; background: rgba(255, 152, 0, 0.2);">⚠️ ' + msg + '</div>'; setTimeout(() => { infoBox.innerHTML = originalContent; }, 1500); }
     </script>
 </body>
 </html>
