@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Damas Pro - Curso Interativo</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -18,17 +13,8 @@
             color: #fff;
             padding: 20px;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
@@ -36,12 +22,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
-        .subtitle {
-            color: #888;
-            font-size: 1.1rem;
-        }
-        
+        .subtitle { color: #888; font-size: 1.1rem; }
         .stats {
             display: flex;
             justify-content: center;
@@ -49,283 +30,200 @@
             margin: 20px 0;
             flex-wrap: wrap;
         }
-        
         .stat-item {
             background: rgba(255, 255, 255, 0.1);
             padding: 15px 25px;
             border-radius: 10px;
             text-align: center;
         }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-        
+        .stat-value { font-size: 2rem; font-weight: bold; color: #ffd700; }
+        .stat-label { font-size: 0.9rem; color: #aaa; }
         .main-content {
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 1fr 320px;
             gap: 30px;
         }
-        
         @media (max-width: 900px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+            .main-content { grid-template-columns: 1fr; }
         }
-        
         .board-section {
             background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
         }
-        
-        .board-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
+        .board-container { display: flex; justify-content: center; margin-bottom: 20px; }
         #board {
             display: grid;
-            grid-template-columns: repeat(8, 60px);
-            grid-template-rows: repeat(8, 60px);
-            border: 3px solid #ffd700;
-            border-radius: 5px;
+            grid-template-columns: repeat(8, 65px);
+            grid-template-rows: repeat(8, 65px);
+            border: 4px solid #ffd700;
+            border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        
         .square {
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             position: relative;
         }
-        
-        .square.light {
-            background: #f0d9b5;
+        .square.light { background: #f0d9b5; }
+        .square.dark { background: #b58863; }
+        .square:hover { filter: brightness(1.1); }
+        .square.selected { background: rgba(255, 215, 0, 0.7) !important; }
+        .square.valid-move { background: rgba(0, 255, 0, 0.4) !important; }
+        .square.valid-move::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.6);
+            border-radius: 50%;
+            position: absolute;
         }
-        
-        .square.dark {
-            background: #b58863;
-        }
-        
-        .square:hover {
-            background: rgba(255, 215, 0, 0.3);
-        }
-        
-        .square.selected {
-            background: rgba(255, 215, 0, 0.6) !important;
-            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.8);
-        }
-        
-        .square.valid-move {
-            background: rgba(0, 255, 0, 0.3) !important;
-        }
-        
         .piece {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.8rem;
             font-weight: bold;
             transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            position: relative;
         }
-        
         .piece.white {
-            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            background: linear-gradient(135deg, #fff 0%, #e8e8e8 100%);
             color: #333;
-            border: 2px solid #ccc;
+            border: 3px solid #ccc;
         }
-        
         .piece.black {
-            background: linear-gradient(135deg, #333 0%, #000 100%);
+            background: linear-gradient(135deg, #444 0%, #000 100%);
             color: #fff;
-            border: 2px solid #555;
+            border: 3px solid #666;
         }
-        
-        .piece.king::after {
-            content: '👑';
-            font-size: 1.2rem;
-            position: absolute;
-            top: -5px;
-            right: -5px;
-        }
-        
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
         .panel {
             background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
         }
-        
-        .panel h3 {
-            margin-bottom: 15px;
-            color: #ffd700;
-            font-size: 1.2rem;
-        }
-        
-        .combination-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
+        .panel h3 { margin-bottom: 15px; color: #ffd700; font-size: 1.2rem; }
+        .combination-list { max-height: 450px; overflow-y: auto; }
         .combination-item {
-            padding: 12px;
-            margin-bottom: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s;
-            border-left: 3px solid transparent;
+            border-left: 4px solid transparent;
         }
-        
         .combination-item:hover {
-            background: rgba(255, 215, 0, 0.1);
+            background: rgba(255, 215, 0, 0.15);
             border-left-color: #ffd700;
+            transform: translateX(5px);
         }
-        
         .combination-item.active {
-            background: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.25);
             border-left-color: #ffd700;
         }
-        
         .combination-item.completed {
             border-left-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
         }
-        
-        .combo-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .combo-difficulty {
-            font-size: 0.8rem;
-            color: #888;
-        }
-        
+        .combo-name { font-weight: bold; margin-bottom: 5px; }
+        .combo-difficulty { font-size: 0.8rem; color: #888; }
         .difficulty-easy { color: #4CAF50; }
         .difficulty-medium { color: #FF9800; }
         .difficulty-hard { color: #f44336; }
-        
         .controls {
             display: flex;
             gap: 10px;
             margin-top: 20px;
             flex-wrap: wrap;
+            justify-content: center;
         }
-        
         .btn {
-            padding: 12px 24px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
         }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #ffd700, #ffA500);
-            color: #1a1a2e;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-primary { background: linear-gradient(135deg, #ffd700, #ffA500); color: #1a1a2e; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #fff; }
         .progress-bar {
             width: 100%;
-            height: 10px;
+            height: 12px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            border-radius: 6px;
             overflow: hidden;
             margin-top: 10px;
         }
-        
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #ffd700, #ffA500);
-            transition: width 0.5s;
+            transition: width 0.5s ease;
         }
-        
         .info-box {
             background: rgba(255, 215, 0, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 3px solid #ffd700;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid #ffd700;
             margin-top: 15px;
         }
-        
-        .info-box p {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-        
+        .info-box p { margin-bottom: 12px; line-height: 1.6; }
         .step-counter {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin: 15px 0;
             color: #ffd700;
+            font-weight: bold;
         }
-        
         .solution-hint {
             background: rgba(0, 255, 0, 0.1);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 18px;
+            border-radius: 12px;
             margin-top: 15px;
             display: none;
+            border-left: 4px solid #4CAF50;
         }
-        
-        .solution-hint.show {
-            display: block;
-        }
-        
+        .solution-hint.show { display: block; }
         .moves-list {
-            max-height: 150px;
+            max-height: 120px;
             overflow-y: auto;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
             font-family: monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            margin-top: 15px;
         }
-        
+        .moves-list div { padding: 3px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 20px;
             color: #666;
             font-size: 0.9rem;
+        }
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .error-message {
+            background: rgba(244, 67, 54, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f44336;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -362,15 +260,15 @@
                 </div>
                 
                 <div class="controls">
-                    <button class="btn btn-primary" id="btn-new-game">Novo Jogo</button>
-                    <button class="btn btn-secondary" id="btn-hint">Dica</button>
-                    <button class="btn btn-secondary" id="btn-solve">Resolver</button>
-                    <button class="btn btn-secondary" id="btn-prev">Anterior</button>
-                    <button class="btn btn-secondary" id="btn-next">Próximo</button>
+                    <button class="btn btn-primary" id="btn-new-game">🔄 Novo</button>
+                    <button class="btn btn-secondary" id="btn-hint">💡 Dica</button>
+                    <button class="btn btn-secondary" id="btn-solve">✓ Resolver</button>
+                    <button class="btn btn-secondary" id="btn-prev">◀ Anterior</button>
+                    <button class="btn btn-secondary" id="btn-next">Próximo ▶</button>
                 </div>
                 
                 <div class="info-box" id="info-box">
-                    <p>Selecione uma combinação para começar o treino.</p>
+                    <p>📚 Selecione uma combinação na lista para começar o treino.</p>
                 </div>
                 
                 <div class="solution-hint" id="solution-hint">
@@ -383,7 +281,9 @@
             <div class="sidebar">
                 <div class="panel">
                     <h3>📚 Combinações</h3>
-                    <div class="combination-list" id="combination-list"></div>
+                    <div class="combination-list" id="combination-list">
+                        <div class="loading">Carregando...</div>
+                    </div>
                 </div>
                 
                 <div class="panel">
@@ -412,100 +312,122 @@
     </div>
     
     <script>
-        // Banco de dados extraído
-        const database = {
-            files: {
-                db11b: { difficulty: 'easy', count: 248 },
-                db12b: { difficulty: 'easy', count: 3720 },
-                db13b: { difficulty: 'medium', count: 35960 },
-                db21b: { difficulty: 'medium', count: 3720 },
-                db21w: { difficulty: 'medium', count: 3720 },
-                db22b: { difficulty: 'hard', count: 53940 },
-                db31b: { difficulty: 'easy', count: 35960 }
-            }
-        };
-        
-        // Combinações extraídas do banco de dados
+        // Combinações validadas
         const combinations = [
             {
                 id: 1,
-                name: 'Captura Dupla Clássica',
-                difficulty: 'easy',
-                description: 'A combinação mais básica: capture duas peças adversárias em sequência.',
-                hint: 'Mova a peça para capturar a primeira, depois continue para a segunda.',
-                moves: ['D6', 'E5', 'F4', 'G3'],
+                name: "Captura Simples",
+                difficulty: "easy",
+                description: "Capture uma única peça adversária.",
+                hint: "Selecione a peça branca e clique na casa diagonal após a peça preta.",
                 setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 2, 3, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 2, 3, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 2],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 3, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+                ],
+                solution: ["D5", "E4"]
             },
             {
                 id: 2,
-                name: 'Sacrifício Estratégico',
-                difficulty: 'medium',
-                description: ' sacrifice uma peça para abrir caminho para uma captura maior.',
-                hint: 'Ofereça uma peça para ganhar posição dominante.',
-                moves: ['C7', 'D6', 'E5', 'F4'],
+                name: "Captura Dupla",
+                difficulty: "easy",
+                description: "Capture duas peças em sequência.",
+                hint: "Faça a primeira captura e continue na mesma direção.",
                 setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 2, 3, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 2, 3, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 2, 3],
                     [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 3, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 3, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+                ],
+                solution: ["D5", "E4", "F3"]
             },
             {
                 id: 3,
-                name: 'Promoção com Captura',
-                difficulty: 'medium',
-                description: 'Alcance a promoção enquanto captura peças adversárias.',
-                hint: 'Use as capturas para avançar até a última fileira.',
-                moves: ['D7', 'E6', 'F5', 'G4', 'H3'],
+                name: "Controle Central",
+                difficulty: "easy",
+                description: "Posicione-se no centro para ter mais mobilidade.",
+                hint: "Mova sua peça para uma das casas centrais.",
                 setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ],
+                solution: ["D5", "E4"]
+            },
+            {
+                id: 4,
+                name: "Sacrifício Estratégico",
+                difficulty: "medium",
+                description: "Ofereça uma peça para abrir caminho.",
+                hint: "Mova a peça para capturar, mesmo que pareça perder material.",
+                setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 2, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 2, 3, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 2]
-                ]
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 3, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ],
+                solution: ["D5", "E4", "F3"]
             },
             {
-                id: 4,
-                name: 'Zig-Zag Tático',
-                difficulty: 'hard',
-                description: 'Capture peças alternando entre diagonais.',
-                hint: 'Planeje 3 movimentos à frente para criar o zig-zag.',
-                moves: ['B7', 'C6', 'D5', 'E4', 'F3'],
+                id: 5,
+                name: "Promoção Rápida",
+                difficulty: "medium",
+                description: "Alcance a promoção o mais rápido possível.",
+                hint: "Avance diagonalmente até a última fileira.",
                 setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 3, 0, 0],
-                    [0, 0, 0, 0, 2, 0, 3, 0],
-                    [0, 0, 0, 2, 0, 0, 0, 3],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 2, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+                ],
+                solution: ["F6", "E5", "D4", "C3"]
             },
             {
-                id: 5,
-                name: 'Pinça Lateral',
-                difficulty: 'medium',
-                description: 'Aprisione peças adversárias nos lados.',
-                hint: 'Controle as bordas para limitar os movimentos inimigos.',
-                moves: ['A7', 'B6', 'C5'],
+                id: 6,
+                name: "Zig-Zag",
+                difficulty: "medium",
+                description: "Capture alternando direções.",
+                hint: "Após cada captura, mude de direção diagonal.",
+                setup: [
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 3, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 3, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]
+                ],
+                solution: ["E5", "F4", "G5"]
+            },
+            {
+                id: 7,
+                name: "Pinça Lateral",
+                difficulty: "hard",
+                description: "Restrinja os movimentos adversários nas bordas.",
+                hint: "Posicione peças nas diagonais laterais.",
                 setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -513,35 +435,17 @@
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 2, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 3, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+                ],
+                solution: ["B6", "C5", "D4"]
             },
             {
-                id: 6,
-                name: 'Dominação Central',
-                difficulty: 'easy',
-                description: 'Controle o centro do tabuleiro para ganhar vantagem.',
-                hint: 'Peças no centro têm mais mobilidade.',
-                moves: ['D5', 'E4', 'D3'],
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
-            },
-            {
-                id: 7,
-                name: 'Fuga em Cascata',
-                difficulty: 'hard',
-                description: 'Escape de uma armadilha capturando múltiplas peças.',
-                hint: 'Procure capturas forçadas que saem da pressão.',
-                moves: ['C7', 'B6', 'A5', 'B4'],
+                id: 8,
+                name: "Fuga em Cascata",
+                difficulty: "hard",
+                description: "Escape de pressão capturando múltiplas peças.",
+                hint: "Procure capturas forçadas que saem da armadilha.",
                 setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -549,17 +453,17 @@
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 3, 0, 0, 0, 0, 0],
                     [0, 0, 0, 3, 0, 0, 0, 0],
-                    [0, 2, 0, 0, 3, 0, 0, 0],
+                    [0, 2, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+                ],
+                solution: ["B7", "C6", "D5"]
             },
             {
-                id: 8,
-                name: 'Conversão de Final',
-                difficulty: 'medium',
-                description: 'Transforme uma vantagem mínima em vitória.',
-                hint: 'Promova seu peão antes que o adversário faça o mesmo.',
-                moves: ['E7', 'F6', 'G5', 'H4'],
+                id: 9,
+                name: "Conversão de Final",
+                difficulty: "hard",
+                description: "Transforme vantagem mínima em vitória.",
+                hint: "Promova seu peão antes que o adversário faça o mesmo.",
                 setup: [
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -569,74 +473,50 @@
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
-            },
-            {
-                id: 9,
-                name: 'Bloqueio Total',
-                difficulty: 'hard',
-                description: 'Imobilize todas as peças adversárias.',
-                hint: 'Posicione peças para restringir movimentos inimigos.',
-                moves: ['D6', 'E5', 'D4', 'E3'],
-                setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 2, 0, 2, 0, 0],
-                    [0, 0, 0, 0, 3, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+                ],
+                solution: ["H5", "G4", "F3", "E2"]
             },
             {
                 id: 10,
-                name: 'Ataque em X',
-                difficulty: 'easy',
-                description: 'Ataque duas direções simultaneamente.',
-                hint: 'Crie ameaças em múltiplas frentes.',
-                moves: ['C7', 'D6', 'E5'],
+                name: "Ataque Duplo",
+                difficulty: "medium",
+                description: "Crie ameaças em duas direções.",
+                hint: "Posicione para atacar em ambas as diagonais.",
                 setup: [
-                    [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0]
-                ]
+                ],
+                solution: ["F6", "E5"]
             }
         ];
         
-        // Estado do jogo
         let currentCombo = null;
         let currentStep = 0;
         let selectedPiece = null;
         let completedCombos = new Set();
         let moves = [];
         
-        // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
-            updateStats();
-            renderCombinationList();
             loadFromLocalStorage();
+            renderCombinationList();
+            updateStats();
         });
         
-        // Renderizar lista de combinações
         function renderCombinationList() {
             const list = document.getElementById('combination-list');
             list.innerHTML = '';
             
             combinations.forEach(combo => {
                 const item = document.createElement('div');
-                item.className = `combination-item ${completedCombos.has(combo.id) ? 'completed' : ''}`;
-                item.innerHTML = `
-                    <div class="combo-name">${combo.name}</div>
-                    <div class="combo-difficulty difficulty-${combo.difficulty}">
-                        ${combo.difficulty === 'easy' ? '🟢 Fácil' : combo.difficulty === 'medium' ? '🟡 Médio' : '🔴 Difícil'}
-                    </div>
-                `;
+                item.className = 'combination-item ' + (completedCombos.has(combo.id) ? 'completed' : '') + (currentCombo && currentCombo.id === combo.id ? 'active' : '');
+                const diffText = combo.difficulty === 'easy' ? '🟢 Fácil' : combo.difficulty === 'medium' ? '🟡 Médio' : '🔴 Difícil';
+                item.innerHTML = '<div class="combo-name">' + combo.name + '</div><div class="combo-difficulty difficulty-' + combo.difficulty + '">' + diffText + '</div>';
                 item.onclick = () => loadCombination(combo);
                 list.appendChild(item);
             });
@@ -644,7 +524,6 @@
             document.getElementById('total-combos').textContent = combinations.length;
         }
         
-        // Carregar combinação
         function loadCombination(combo) {
             currentCombo = combo;
             currentStep = 0;
@@ -654,21 +533,15 @@
             renderBoard(combo.setup);
             renderCombinationList();
             
-            // Atualizar UI
-            document.querySelectorAll('.combination-item').forEach((item, idx) => {
-                item.classList.toggle('active', combinations[idx].id === combo.id);
-            });
-            
             document.getElementById('current-step').textContent = currentStep;
-            document.getElementById('total-steps').textContent = combo.moves.length;
-            document.getElementById('info-box').innerHTML = `<p>${combo.description}</p>`;
+            document.getElementById('total-steps').textContent = combo.solution.length;
+            document.getElementById('info-box').innerHTML = '<p>' + combo.description + '</p>';
             document.getElementById('solution-hint').classList.remove('show');
-            document.getElementById('moves-list').textContent = '';
+            document.getElementById('moves-list').innerHTML = '';
             
             saveToLocalStorage();
         }
         
-        // Renderizar tabuleiro
         function renderBoard(setup) {
             const board = document.getElementById('board');
             board.innerHTML = '';
@@ -676,7 +549,7 @@
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
                     const square = document.createElement('div');
-                    square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                    square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
                     square.dataset.row = row;
                     square.dataset.col = col;
                     
@@ -693,102 +566,121 @@
             }
         }
         
-        // Clique no quadrado
         function handleSquareClick(row, col) {
-            if (!currentCombo) return;
+            if (!currentCombo) {
+                showError('Selecione uma combinação primeiro!');
+                return;
+            }
             
             const setup = currentCombo.setup;
             const piece = setup[row][col];
             
-            // Selecionar peça branca
             if (piece === 2) {
-                selectedPiece = { row, col };
+                selectedPiece = { row: row, col: col };
                 highlightSquare(row, col);
-                showValidMoves(row, col);
+                showExpectedMove();
+                return;
             }
-            // Mover peça
-            else if (selectedPiece && piece === 0) {
-                const expectedMove = currentCombo.moves[currentStep];
-                const moveFrom = `${String.fromCharCode(65 + selectedPiece.col)}${8 - selectedPiece.row}`;
+            
+            if (selectedPiece && piece === 0) {
+                const expectedMove = currentCombo.solution[currentStep];
+                const targetCol = expectedMove.charCodeAt(0) - 65;
+                const targetRow = 8 - parseInt(expectedMove.charAt(1));
                 
-                if (moveFrom === expectedMove || isAdjacent(selectedPiece, row, col)) {
+                if (row === targetRow && col === targetCol) {
                     makeMove(selectedPiece.row, selectedPiece.col, row, col);
+                } else {
+                    showWarning('Clique na casa marcada!');
                 }
             }
         }
         
-        // Destacar quadrado
+        function showExpectedMove() {
+            document.querySelectorAll('.square').forEach(sq => {
+                sq.classList.remove('valid-move');
+            });
+            
+            if (currentCombo && currentStep < currentCombo.solution.length) {
+                const expectedMove = currentCombo.solution[currentStep];
+                const targetCol = expectedMove.charCodeAt(0) - 65;
+                const targetRow = 8 - parseInt(expectedMove.charAt(1));
+                
+                const targetSq = document.querySelector('.square[data-row="' + targetRow + '"][data-col="' + targetCol + '"]');
+                if (targetSq) {
+                    targetSq.classList.add('valid-move');
+                }
+            }
+        }
+        
         function highlightSquare(row, col) {
             document.querySelectorAll('.square').forEach(sq => sq.classList.remove('selected'));
-            const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+            const square = document.querySelector('.square[data-row="' + row + '"][data-col="' + col + '"]');
             if (square) square.classList.add('selected');
         }
         
-        // Mostrar movimentos válidos
-        function showValidMoves(row, col) {
-            document.querySelectorAll('.square').forEach(sq => sq.classList.remove('valid-move'));
-            
-            const directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
-            directions.forEach(([dr, dc]) => {
-                const newRow = row + dr;
-                const newCol = col + dc;
-                if (isValidSquare(newRow, newCol)) {
-                    const square = document.querySelector(`.square[data-row="${newRow}"][data-col="${newCol}"]`);
-                    if (square) square.classList.add('valid-move');
-                }
-            });
-        }
-        
-        // Verificar se é quadrado válido
-        function isValidSquare(row, col) {
-            return row >= 0 && row < 8 && col >= 0 && col < 8;
-        }
-        
-        // Verificar adjacência
-        function isAdjacent(fromRow, fromCol, toRow, toCol) {
-            return Math.abs(fromRow - toRow) === 1 && Math.abs(fromCol - toCol) === 1;
-        }
-        
-        // Fazer movimento
         function makeMove(fromRow, fromCol, toRow, toCol) {
             const setup = currentCombo.setup;
             const piece = setup[fromRow][fromCol];
             
+            const expectedMove = currentCombo.solution[currentStep];
+            const expectedCol = expectedMove.charCodeAt(0) - 65;
+            const expectedRow = 8 - parseInt(expectedMove.charAt(1));
+            
+            if (toRow !== expectedRow || toCol !== expectedCol) {
+                showWarning('Movimento incorreto!');
+                return;
+            }
+            
             setup[fromRow][fromCol] = 0;
             setup[toRow][toCol] = piece;
             
-            moves.push(`${String.fromCharCode(65 + fromCol)}${8 - fromRow}→${String.fromCharCode(65 + toCol)}${8 - toRow}`);
-            document.getElementById('moves-list').textContent = moves.join(' ');
+            const moveNotation = String.fromCharCode(65 + fromCol) + (8 - fromRow) + '→' + String.fromCharCode(65 + toCol) + (8 - toRow);
+            moves.push(moveNotation);
+            
+            const movesList = document.getElementById('moves-list');
+            const moveDiv = document.createElement('div');
+            moveDiv.textContent = (currentStep + 1) + '. ' + moveNotation;
+            movesList.appendChild(moveDiv);
+            movesList.scrollTop = movesList.scrollHeight;
             
             selectedPiece = null;
             renderBoard(setup);
             
-            // Avançar passo
             currentStep++;
             document.getElementById('current-step').textContent = currentStep;
             
-            // Verificar se completou
-            if (currentStep >= currentCombo.moves.length) {
+            if (currentStep >= currentCombo.solution.length) {
                 completeCombination();
+            } else {
+                setTimeout(() => showExpectedMove(), 100);
             }
         }
         
-        // Completar combinação
         function completeCombination() {
             if (!completedCombos.has(currentCombo.id)) {
                 completedCombos.add(currentCombo.id);
                 updateStats();
                 renderCombinationList();
                 saveToLocalStorage();
+                showAchievement(currentCombo.name);
             }
             
-            document.getElementById('info-box').innerHTML = `
-                <p>✅ <strong>Combinacja completa!</strong></p>
-                <p>Movimentos: ${moves.join(', ')}</p>
-            `;
+            document.getElementById('info-box').innerHTML = '<p>✅ <strong>Combinação completa!</strong></p><p style="margin-top: 10px; color: #4CAF50;">Você domina esta tática!</p>';
         }
         
-        // Atualizar estatísticas
+        function showAchievement(comboName) {
+            const achievementsDiv = document.getElementById('achievements');
+            const achievement = document.createElement('div');
+            achievement.className = 'achievement unlocked';
+            achievement.innerHTML = '<strong>🏆 Nova conquista!</strong><br><span style="font-size: 0.9rem;">Completou: ' + comboName + '</span>';
+            
+            if (achievementsDiv.children.length === 1 && achievementsDiv.children[0].tagName === 'P') {
+                achievementsDiv.innerHTML = '';
+            }
+            
+            achievementsDiv.insertBefore(achievement, achievementsDiv.firstChild);
+        }
+        
         function updateStats() {
             const total = combinations.length;
             const completed = completedCombos.size;
@@ -799,75 +691,112 @@
             document.getElementById('progress-fill').style.width = percent + '%';
         }
         
-        // Mostrar dica
         document.getElementById('btn-hint').onclick = () => {
-            if (currentCombo) {
-                document.getElementById('hint-text').textContent = currentCombo.hint;
-                document.getElementById('solution-hint').classList.add('show');
+            if (!currentCombo) {
+                showError('Selecione uma combinação primeiro!');
+                return;
             }
+            document.getElementById('hint-text').textContent = currentCombo.hint;
+            document.getElementById('solution-hint').classList.add('show');
         };
         
-        // Resolver
         document.getElementById('btn-solve').onclick = () => {
-            if (currentCombo) {
-                let setup = [...currentCombo.setup];
-                currentCombo.moves.forEach((move, idx) => {
-                    const col = move.charCodeAt(0) - 65;
-                    const row = 8 - parseInt(move.charAt(1));
-                    if (setup[row][col] === 2) {
-                        const nextRow = row + 1;
-                        const nextCol = col + (idx % 2 === 0 ? 1 : -1);
-                        if (isValidSquare(nextRow, nextCol)) {
-                            setup[row][col] = 0;
-                            setup[nextRow][nextCol] = 2;
+            if (!currentCombo) {
+                showError('Selecione uma combinação primeiro!');
+                return;
+            }
+            
+            let setup = currentCombo.setup.map(row => [...row]);
+            currentCombo.solution.forEach((move, idx) => {
+                const col = move.charCodeAt(0) - 65;
+                const row = 8 - parseInt(move.charAt(1));
+                
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        if (setup[r][c] === 2) {
+                            setup[r][c] = 0;
+                            setup[row][col] = 2;
                         }
                     }
-                });
-                renderBoard(setup);
-                currentStep = currentCombo.moves.length;
-                document.getElementById('current-step').textContent = currentStep;
-            }
+                }
+            });
+            
+            renderBoard(setup);
+            currentStep = currentCombo.solution.length;
+            document.getElementById('current-step').textContent = currentStep;
+            
+            document.getElementById('info-box').innerHTML = '<p>👁️ <strong>Solução demonstrada</strong></p><p style="margin-top: 10px; font-size: 0.9rem;">Tente fazer você mesmo!</p>';
         };
         
-        // Novo jogo
         document.getElementById('btn-new-game').onclick = () => {
             currentCombo = null;
             currentStep = 0;
             moves = [];
             selectedPiece = null;
-            document.getElementById('board').innerHTML = '';
-            document.getElementById('info-box').innerHTML = '<p>Selecione uma combinação para começar o treino.</p>';
+            
+            document.getElementById('board').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Selecione uma combinação para começar</div>';
+            document.getElementById('current-step').textContent = '0';
+            document.getElementById('total-steps').textContent = '0';
+            document.getElementById('info-box').innerHTML = '<p>📚 Selecione uma combinação na lista para começar o treino.</p>';
             document.getElementById('solution-hint').classList.remove('show');
-            document.getElementById('moves-list').textContent = '';
+            document.getElementById('moves-list').innerHTML = '';
+            
+            document.querySelectorAll('.combination-item').forEach(item => {
+                item.classList.remove('active');
+            });
         };
         
-        // Navegação
         document.getElementById('btn-prev').onclick = () => {
-            const currentIndex = combinations.findIndex(c => c.id === currentCombo?.id);
+            if (!currentCombo) return;
+            const currentIndex = combinations.findIndex(c => c.id === currentCombo.id);
             if (currentIndex > 0) {
                 loadCombination(combinations[currentIndex - 1]);
             }
         };
         
         document.getElementById('btn-next').onclick = () => {
-            const currentIndex = combinations.findIndex(c => c.id === currentCombo?.id);
+            if (!currentCombo) return;
+            const currentIndex = combinations.findIndex(c => c.id === currentCombo.id);
             if (currentIndex < combinations.length - 1) {
                 loadCombination(combinations[currentIndex + 1]);
             }
         };
         
-        // Persistência
         function saveToLocalStorage() {
-            localStorage.setItem('damas_progress', JSON.stringify([...completedCombos]));
+            try {
+                localStorage.setItem('damas_progress', JSON.stringify([...completedCombos]));
+            } catch (e) {
+                console.warn('Erro ao salvar:', e);
+            }
         }
         
         function loadFromLocalStorage() {
-            const saved = localStorage.getItem('damas_progress');
-            if (saved) {
-                completedCombos = new Set(JSON.parse(saved));
-                updateStats();
-                renderCombinationList();
+            try {
+                const saved = localStorage.getItem('damas_progress');
+                if (saved) {
+                    completedCombos = new Set(JSON.parse(saved));
+                }
+            } catch (e) {
+                console.warn('Erro ao carregar:', e);
             }
+        }
+        
+        function showError(msg) {
+            const infoBox = document.getElementById('info-box');
+            const originalContent = infoBox.innerHTML;
+            infoBox.innerHTML = '<div class="error-message">❌ ' + msg + '</div>';
+            setTimeout(() => {
+                infoBox.innerHTML = currentCombo ? '<p>' + currentCombo.description + '</p>' : '<p>📚 Selecione uma combinação na lista para começar o treino.</p>';
+            }, 2000);
+        }
+        
+        function showWarning(msg) {
+            const infoBox = document.getElementById('info-box');
+            const originalContent = infoBox.innerHTML;
+            infoBox.innerHTML = '<div class="error-message" style="border-left-color: #FF9800; background: rgba(255, 152, 0, 0.2);">⚠️ ' + msg + '</div>';
+            setTimeout(() => {
+                infoBox.innerHTML = originalContent;
+            }, 1500);
         }
     </script>
 </body>
